@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EventHub - College Event Registration System built with Express.js">
+  <title>EventHub | College Event Registration System</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="#home" class="logo">
+        <span class="logo-icon">&#127891;</span>
+        <span class="logo-text">Event<span class="highlight">Hub</span></span>
+      </a>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+        <span class="hamburger"></span>
+      </button>
+
+      <nav class="main-nav" id="mainNav">
+        <ul class="nav-list">
+          <li><a href="#home" class="nav-link active">Home</a></li>
+          <li><a href="#events" class="nav-link">Events</a></li>
+          <li><a href="#register" class="nav-link">Register</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+      <div class="container hero-container">
+        <div class="hero-content">
+          <span class="hero-badge">Campus Technical Events 2026</span>
+          <h1 class="hero-title">Discover. Participate. <span class="highlight">Innovate.</span></h1>
+          <p class="hero-subtitle">
+            Welcome to the official college event portal. Explore coding marathons, technical symposia, AI workshops, and masterclasses. Secure your seat today and showcase your skills!
+          </p>
+          <div class="hero-actions">
+            <a href="#events" class="btn btn-primary">Explore Events</a>
+            <a href="#register" class="btn btn-secondary">Register Now</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Events Section -->
+    <section id="events" class="events-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Featured Programmes</span>
+          <h2 class="section-title">Upcoming College Events</h2>
+          <p class="section-subtitle">Real-time seat availability and event schedules powered by ExpressJS backend.</p>
+        </div>
+
+        <!-- Dynamic Events Grid -->
+        <div id="eventsLoading" class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading available events...</p>
+        </div>
+
+        <div id="eventsError" class="alert alert-error hidden" role="alert">
+          <p id="eventsErrorMessage">Failed to load events. Please try again later.</p>
+        </div>
+
+        <div id="eventsGrid" class="events-grid">
+          <!-- Cards populated dynamically via JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Registration Section -->
+    <section id="register" class="register-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Seat Reservation</span>
+          <h2 class="section-title">Event Registration Form</h2>
+          <p class="section-subtitle">Fill in your participant details below. All submissions are validated by the Express backend.</p>
+        </div>
+
+        <div class="register-card">
+          <!-- Alert Notification Box -->
+          <div id="formAlert" class="alert hidden" role="alert">
+            <div id="formAlertContent"></div>
+          </div>
+
+          <form id="registrationForm" novalidate>
+            <div class="form-grid">
+              <!-- Full Name -->
+              <div class="form-group">
+                <label for="fullName" class="form-label">Full Name <span class="required">*</span></label>
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  class="form-control"
+                  placeholder="e.g., Aarav Sharma"
+                  required
+                  minlength="2"
+                  maxlength="60"
+                  autocomplete="name"
+                >
+                <span class="field-error" id="fullNameError"></span>
+              </div>
+
+              <!-- Email -->
+              <div class="form-group">
+                <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  class="form-control"
+                  placeholder="e.g., aarav.sharma@example.edu"
+                  required
+                  autocomplete="email"
+                >
+                <span class="field-error" id="emailError"></span>
+              </div>
+
+              <!-- Phone -->
+              <div class="form-group">
+                <label for="phone" class="form-label">Mobile Number <span class="required">*</span></label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  class="form-control"
+                  placeholder="e.g., 9876543210 or +91 98765-43210"
+                  required
+                  autocomplete="tel"
+                >
+                <span class="form-hint">10-digit Indian mobile number (starts with 6, 7, 8, or 9)</span>
+                <span class="field-error" id="phoneError"></span>
+              </div>
+
+              <!-- College -->
+              <div class="form-group">
+                <label for="college" class="form-label">College / Institute <span class="required">*</span></label>
+                <input
+                  type="text"
+                  id="college"
+                  name="college"
+                  class="form-control"
+                  placeholder="e.g., Government Engineering College"
+                  required
+                  minlength="2"
+                  maxlength="100"
+                >
+                <span class="field-error" id="collegeError"></span>
+              </div>
+
+              <!-- Select Event -->
+              <div class="form-group">
+                <label for="eventId" class="form-label">Select Event <span class="required">*</span></label>
+                <select id="eventId" name="eventId" class="form-select" required>
+                  <option value="">-- Choose an Event --</option>
+                  <!-- Populated dynamically via JavaScript -->
+                </select>
+                <span class="field-error" id="eventIdError"></span>
+              </div>
+
+              <!-- Ticket Type -->
+              <div class="form-group">
+                <label for="ticketType" class="form-label">Ticket Type <span class="required">*</span></label>
+                <select id="ticketType" name="ticketType" class="form-select" required>
+                  <option value="Student">Student (College ID Required)</option>
+                  <option value="Standard">Standard (General Attendee)</option>
+                </select>
+                <span class="field-error" id="ticketTypeError"></span>
+              </div>
+
+              <!-- Additional Notes -->
+              <div class="form-group form-group-full">
+                <label for="notes" class="form-label">Additional Notes <span class="optional">(Optional, max 300 characters)</span></label>
+                <textarea
+                  id="notes"
+                  name="notes"
+                  class="form-control"
+                  rows="3"
+                  maxlength="300"
+                  placeholder="Mention special interests, dietary requirements, team details, or queries..."
+                ></textarea>
+                <div class="textarea-footer">
+                  <span class="field-error" id="notesError"></span>
+                  <span class="char-counter" id="charCounter">0 / 300</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button & Loading State -->
+            <div class="form-actions">
+              <button type="submit" id="submitBtn" class="btn btn-primary btn-submit">
+                <span class="btn-text">Confirm Registration</span>
+                <span class="btn-spinner hidden" aria-hidden="true"></span>
+              </button>
+              <button type="reset" id="resetBtn" class="btn btn-outline">Clear Form</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Registration Success Modal -->
+  <div id="confirmationModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-success-icon">&#10004;</div>
+          <h3 id="modalTitle" class="modal-title">Registration Confirmed!</h3>
+          <p class="modal-subtitle">Your registration has been successfully recorded in the system.</p>
+        </div>
+        <div class="modal-body">
+          <div class="confirmation-details">
+            <div class="detail-row">
+              <span class="detail-label">Registration ID</span>
+              <span class="detail-value badge-id" id="modalRegId">-</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Participant Name</span>
+              <span class="detail-value" id="modalName">-</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Registered Event</span>
+              <span class="detail-value" id="modalEvent">-</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Ticket Type</span>
+              <span class="detail-value" id="modalTicket">-</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Timestamp</span>
+              <span class="detail-value" id="modalTimestamp">-</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="modalCloseBtn" class="btn btn-primary">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <div class="logo">
+          <span class="logo-icon">&#127891;</span>
+          <span class="logo-text">Event<span class="highlight">Hub</span></span>
+        </div>
+        <p class="footer-desc">
+          Modern college event registration portal demonstrating modular ExpressJS architecture, server-side validation, in-memory data management, and RESTful routing.
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <h4 class="footer-heading">Quick Links</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#events">Explore Events</a></li>
+          <li><a href="#register">Register</a></li>
+          <li><a href="/health" target="_blank" rel="noopener">Server Health</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-meta">
+        <h4 class="footer-heading">Academic Practical</h4>
+        <p>Practical No. 05 &mdash; ExpressJS Web Application Framework</p>
+        <p>Department of Computer Engineering</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 EventHub. Developed for College Practical Demonstration.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
+
